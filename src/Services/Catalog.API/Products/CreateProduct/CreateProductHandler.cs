@@ -1,7 +1,5 @@
-﻿using Catalog.API.Models;
-using MediatR;
-using SharedKernel.CQRS;
-using System.Windows.Input;
+﻿
+
 
 namespace Catalog.API.Products.CreateProduct
 {
@@ -9,14 +7,15 @@ namespace Catalog.API.Products.CreateProduct
 
     public record CreateProductResult(Guid Id);
 
-    internal class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, CreateProductResult>
+    
+    internal class CreateProductCommandHandler (IDocumentSession session) : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
             // business logic to create a product
 
             //Vreate Product ENtity from command object
-            var product = new Product
+            var  product = new Product
             {
                 //Id = Guid.NewGuid(),
                 Name = command.Name,
@@ -26,11 +25,12 @@ namespace Catalog.API.Products.CreateProduct
                 ImageFile = command.ImageFile
             };
 
-            //Save to database using Repository Pattern
-            //productRepository.Add(product);
-            //await productRepository.UnitOfWork.SaveEntitiesAsync();
+            //Save to database using Marten ORM, Don't use repository pattern hard to change database i need to change all repositories
+            session.Store(product);
+            await session.SaveChangesAsync(cancellationToken);
+
             //Return the productResult result
-            return  new CreateProductResult(Guid.NewGuid()); 
+            return new CreateProductResult(product.Id); 
         }
     }
 }

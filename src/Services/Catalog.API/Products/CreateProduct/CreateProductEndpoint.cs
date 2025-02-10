@@ -1,7 +1,4 @@
-﻿
-using SharedKernel.CQRS;
-
-namespace Catalog.API.Products.CreateProduct
+﻿namespace Catalog.API.Products.CreateProduct
 {
     public record CreateProductRequest(string Name, decimal Price, List<string> Category, string Description, string ImageFile) : ICommand<CreateProductResult>;
 
@@ -26,7 +23,7 @@ namespace Catalog.API.Products.CreateProduct
              .Produces<CreateProductResponse>(StatusCodes.Status201Created)
              .ProducesProblem(StatusCodes.Status400BadRequest)
              .WithSummary("Create Product")
-             .WithDescription("reateProduct");
+             .WithDescription("Create Product");
         }
     }
 }
